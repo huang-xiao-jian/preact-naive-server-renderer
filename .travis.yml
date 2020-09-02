@@ -8,4 +8,5 @@ install:
   - yarn
   - yarn add preact --peer
 after_success:
+  - yarn add coveralls;
   - cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
