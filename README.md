@@ -17,7 +17,7 @@ import { render, stringify } from 'preact-naive-server-renderer';
 function render(vnode: ComponentChild, parent: HostElement): HostElement;
 
 // stringify host element tree into string literal
-function stringify(children: ElementChild[], singleTags: SingelTag[]): string
+function stringify(children: ElementChild[], singleTags: SingleTag[]): string
 ```
 
 # Licence

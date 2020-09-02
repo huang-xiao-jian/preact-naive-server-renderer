@@ -4,7 +4,8 @@
 */
 
 // internal
-import { ElementVNode, ElementChild, SingelTag, ElementVNodeProps } from './index.interface';
+import { ElementVNode, ElementChild, SingleTag, ElementVNodeProps } from './index.interface';
+import { isSingleTag, isFalsyChild } from './utils';
 
 // scope
 export const DEFAULT_SINGLE_TAGS = [
@@ -26,15 +27,6 @@ export const DEFAULT_SINGLE_TAGS = [
   'track',
   'wbr'
 ];
-
-function isSingleTag(tag: string, singleTags: SingelTag[]) {
-  return singleTags.some((singleTag) => typeof singleTag === 'string' ? singleTag === tag : singleTag.test(tag))
-}
-
-// skip content which should not have influence
-function isFalsyChild(child: unknown): boolean {
-  return child === undefined || child === null || typeof child === 'boolean' || Number.isNaN(child);
-}
 
 export function stringifyElementAttributes(props: ElementVNodeProps) {
   // avoid annoying type mismatch issue
@@ -68,7 +60,7 @@ export function stringifyElementAttributes(props: ElementVNodeProps) {
 }
 
 // 递归方式执行
-export function stringifyElementChild(child: ElementChild, singleTags: SingelTag[] = []) {
+export function stringifyElementChild(child: ElementChild, singleTags: SingleTag[] = []) {
   // 空字符串
   if (isFalsyChild(child)) {
     return '';
@@ -89,12 +81,6 @@ export function stringifyElementChild(child: ElementChild, singleTags: SingelTag
     return `${before} ${attributes} />`;
   }
 
-  // innerHTML 快捷设置
-  // dangerouslySetInnerHTML renderer 处理
-  // if (dangerouslySetInnerHTML && dangerouslySetInnerHTML.__html) {
-  //   return `${before} ${attributes}>${dangerouslySetInnerHTML.__html}</${type}>`
-  // }
-
   // 渲染子元素
   return `${before} ${attributes}>${stringify(children)}</${type}>`
 }
@@ -102,6 +88,6 @@ export function stringifyElementChild(child: ElementChild, singleTags: SingelTag
 // 渲染成 VNode tree，确定所有 children 都为数组
 // props 不为空
 // property 不包含 key, ref, on*
-export function stringify(children: ElementChild[], singleTags: SingelTag[] = DEFAULT_SINGLE_TAGS): string {
+export function stringify(children: ElementChild[], singleTags: SingleTag[] = DEFAULT_SINGLE_TAGS): string {
   return children.map((child) => stringifyElementChild(child, singleTags)).join('');
 }

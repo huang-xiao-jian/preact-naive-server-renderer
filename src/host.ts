@@ -2,7 +2,9 @@
 import { ElementVNodeProps } from './index.interface';
 
 // inline type
-type HostElementChild = HostElement | string
+type HostElementChild =
+  | HostElement
+  | string
   | number
   | boolean
   | null

@@ -1,5 +1,5 @@
 // stringify related
-export type SingelTag = string | RegExp;
+export type SingleTag = string | RegExp;
 
 // spread case
 export interface ElementVNode {
