@@ -5,25 +5,20 @@
 ![Package Dependency](https://david-dm.org/huang-xiao-jian/preact-naive-server-renderer.svg?style=flat)
 ![Package DevDependency](https://david-dm.org/huang-xiao-jian/preact-naive-server-renderer/dev-status.svg?style=flat)
 
-A native renderer implementation for server side
+A native renderer implementation for server side preact.
 
 
 ## Usage
 
-```shell
-# compile in watch mode
-npm run compile:watch;
+```typescript
+import { render, stringify } from 'preact-naive-server-renderer';
 
-# unit test with coverage
-npm run test;
+// render preact vnode into host element tree
+function render(vnode: ComponentChild, parent: HostElement): HostElement;
+
+// stringify host element tree into string literal
+function stringify(children: ElementChild[], singleTags: SingelTag[]): string
 ```
-
-## Attention
-
-- tsc compiler compile without `polyfill`, mainly provide declare files
-- babel compiler compile `commonjs` style code
-- remember to change meta field in the `package.json`
-- compile script automatically run before publish, no need for manual compile
 
 # Licence
 
