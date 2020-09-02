@@ -4,5 +4,8 @@ cache:
   yarn: true
 node_js:
   - 10
+install:
+  - yarn
+  - yarn add preact --peer
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
