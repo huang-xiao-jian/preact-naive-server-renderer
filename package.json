@@ -78,7 +78,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged",
-      "pre-push": "npm test",
+      "pre-push": "npm-run-all test",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
