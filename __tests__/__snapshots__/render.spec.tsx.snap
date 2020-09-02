@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renderer should render naive element vnode 1`] = `
+HostElement {
+  "children": Array [
+    HostElement {
+      "children": Array [
+        "Left aligned text on all viewport sizes.",
+      ],
+      "props": Object {
+        "class": "text-left",
+      },
+      "type": "p",
+    },
+  ],
+  "props": Object {},
+  "type": "root",
+}
+`;
+
+exports[`renderer should render naive functinal vnode 1`] = `
+HostElement {
+  "children": Array [
+    HostElement {
+      "children": Array [
+        "Hello World",
+      ],
+      "props": Object {},
+      "type": "h4",
+    },
+    HostElement {
+      "children": Array [
+        "youth is not a time of life!",
+      ],
+      "props": Object {},
+      "type": "p",
+    },
+  ],
+  "props": Object {},
+  "type": "root",
+}
+`;
+
+exports[`renderer should support context type with defaults 1`] = `
+HostElement {
+  "children": Array [
+    HostElement {
+      "children": Array [
+        "Header With Context red",
+      ],
+      "props": Object {},
+      "type": "header",
+    },
+  ],
+  "props": Object {},
+  "type": "root",
+}
+`;
+
+exports[`renderer should support context type with payload 1`] = `
+HostElement {
+  "children": Array [
+    HostElement {
+      "children": Array [
+        "Header With Context yellow",
+      ],
+      "props": Object {},
+      "type": "header",
+    },
+  ],
+  "props": Object {},
+  "type": "root",
+}
+`;
+
+exports[`renderer should support mixed children 1`] = `
+HostElement {
+  "children": Array [
+    HostElement {
+      "children": Array [
+        "Left aligned text on all viewport sizes.",
+      ],
+      "props": Object {
+        "class": "text-left",
+      },
+      "type": "p",
+    },
+    HostElement {
+      "children": Array [
+        "Hello World",
+      ],
+      "props": Object {},
+      "type": "h4",
+    },
+    HostElement {
+      "children": Array [
+        "youth is not a time of life!",
+      ],
+      "props": Object {},
+      "type": "p",
+    },
+    "Mixed Text Node",
+  ],
+  "props": Object {},
+  "type": "root",
+}
+`;

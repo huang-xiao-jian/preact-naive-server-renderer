@@ -90,9 +90,10 @@ export function stringifyElementChild(child: ElementChild, singleTags: SingelTag
   }
 
   // innerHTML 快捷设置
-  if (dangerouslySetInnerHTML && dangerouslySetInnerHTML.__html) {
-    return `${before} ${attributes}>${dangerouslySetInnerHTML.__html}</${type}>`
-  }
+  // dangerouslySetInnerHTML renderer 处理
+  // if (dangerouslySetInnerHTML && dangerouslySetInnerHTML.__html) {
+  //   return `${before} ${attributes}>${dangerouslySetInnerHTML.__html}</${type}>`
+  // }
 
   // 渲染子元素
   return `${before} ${attributes}>${stringify(children)}</${type}>`
