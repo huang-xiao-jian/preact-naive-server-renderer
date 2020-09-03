@@ -1,6 +1,5 @@
-
 // internal
-import { isObject } from './utils';
+import { isObject, styleObjToCss } from './utils';
 import { ElementVNodeProps } from './index.interface';
 
 /**
@@ -10,11 +9,14 @@ import { ElementVNodeProps } from './index.interface';
 export function renderProps(props: ElementVNodeProps): ElementVNodeProps {
   const normalizedProps: ElementVNodeProps = {};
   const keys = Reflect.ownKeys(props) as string[];
-  // key, children, dangerouslySetInnerHTML 为逻辑属性，与 DOM 无关
+  // ignore logical property, see https://github.com/preactjs/preact-render-to-string/blob/694155845d7d98637d80f2fd10b92e64412cfe50/src/index.js#L166
   const specialKeys = [
     'defaultValue',
     'key',
+    'ref',
     'children',
+    '__self',
+    '__source',
     'dangerouslySetInnerHTML',
   ];
 
@@ -23,7 +25,8 @@ export function renderProps(props: ElementVNodeProps): ElementVNodeProps {
    *
    * 1. boolean 属性处理由 stringify 函数处理；
    * 2. 特殊字符编码由 stringify 函数处理；
-   * 3. 'textarea'['value'] --> <textarea value="a&b"> --> <textarea>a&amp;b</textarea> 由 stringify 函数处理;
+   * 3. textarea'['value'] --> <textarea value="a&b"> --> <textarea>a&amp;b</textarea> 由 stringify 函数处理;
+   * 4. option['value'] --> <option>value</option> 由 stringify 函数处理;
    *
    * */
   keys
@@ -39,18 +42,17 @@ export function renderProps(props: ElementVNodeProps): ElementVNodeProps {
     .forEach((key) => {
       const payload = props[key];
 
-      /* key 映射 */
+      /* key reverse */
       if (key === 'className') {
         normalizedProps.class = payload;
       } else if (key === 'htmlFor') {
         normalizedProps.for = payload;
       }
-      /* 值转换 */
-      // style object 特殊处理，字符串使用默认逻辑
-      else if (key === 'style' && payload && isObject(payload)) {
-        normalizedProps.style = JSON.stringify(payload);
-      }
-      else {
+      /* payload convert */
+      // only convert style object
+      else if (key === 'style' && isObject(payload)) {
+        normalizedProps.style = styleObjToCss(payload);
+      } else {
         normalizedProps[key] = payload;
       }
     });
