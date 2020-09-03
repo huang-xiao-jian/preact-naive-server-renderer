@@ -43,7 +43,7 @@ export function stringifyElementAttributes(props: ElementVNodeProps) {
       // quote attributes
       return value === ''
         ? `${acc} ${key}`
-        : `${acc} ${key}="${value.replace(/"/g, '&quot;')}"`;
+        : `${acc} ${key}="${encodeEntities(value)}"`;
     }
 
     if (typeof value === 'number') {
