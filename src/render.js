@@ -20,6 +20,9 @@ export function render(vnode, parent, globalContext = {}) {
   } else if (Array.isArray(vnode)) {
     renderChildren(vnode, parent, globalContext);
   }
+  // else {
+  //   ignore boolean, undefined, null
+  //}
 }
 
 // just for illustrate

@@ -1,10 +1,14 @@
 // internal
 import { isObject, styleObjToCss } from './utils';
+// interface
 import { ElementVNodeProps } from './index.interface';
 
 /**
- * @description - key 筛选、key 映射、value 转换、payload 同步
- * @param {import(./index.interface).ElementVNodeProps} props - vnode props
+ * @description - normalize vnode props
+ *
+ * @param {import(./index.interface).ElementVNodeProps} props - original vnode props
+ *
+ * @returns {import(./index.interface).ElementVNodeProps}
  */
 export function renderProps(props: ElementVNodeProps): ElementVNodeProps {
   const normalizedProps: ElementVNodeProps = {};
@@ -21,24 +25,24 @@ export function renderProps(props: ElementVNodeProps): ElementVNodeProps {
   ];
 
   /**
-   * 特别说明：
+   * extra notice:
    *
-   * 1. boolean 属性处理由 stringify 函数处理；
-   * 2. 特殊字符编码由 stringify 函数处理；
-   * 3. textarea'['value'] --> <textarea value="a&b"> --> <textarea>a&amp;b</textarea> 由 stringify 函数处理;
-   * 4. option['value'] --> <option>value</option> 由 stringify 函数处理;
+   * 1. handle boolean attribute within `stringify`；
+   * 2. handle html entity within `stringify`；
+   * 3. textarea'['value'] --> <textarea value="a&b"> --> <textarea>a&amp;b</textarea> within `stringify`；
+   * 4. option['value'] --> <option>value</option> `stringify`；;
    *
    * */
   keys
-    // 保持属性顺序一致性，便于测试
+    // keep order for better test
     .sort()
-    /* 属性筛选 */
-    // 排除特殊属性
+    /* ignore specific properties */
+    // ignore preact related logical properties
     .filter((key) => !specialKeys.includes(key))
     // https://github.com/preactjs/preact-render-to-string/blob/694155845d7d98637d80f2fd10b92e64412cfe50/src/index.js#L164
     .filter((key) => !/[\s\n\\/='"\0<>]/.test(key))
-    // 排除函数属性
-    .filter((key) => typeof props[key] !== 'function')
+    // ignore function payload and null, undefined
+    .filter((key) => props[key] != null && typeof props[key] !== 'function')
     .forEach((key) => {
       const payload = props[key];
 
@@ -52,7 +56,9 @@ export function renderProps(props: ElementVNodeProps): ElementVNodeProps {
       // only convert style object
       else if (key === 'style' && isObject(payload)) {
         normalizedProps.style = styleObjToCss(payload);
-      } else {
+      }
+      // fallback pass through
+      else {
         normalizedProps[key] = payload;
       }
     });
