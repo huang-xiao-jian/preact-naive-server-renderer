@@ -4,10 +4,11 @@ import { h, Fragment } from 'preact';
 import { render } from '../src/render';
 import { createElement } from '../src/host';
 // fixtures
-import { A, B, Theme } from './__fixtures__/components.fixture';
+import { A, B, C, Theme } from './__fixtures__/components.fixture';
 
 // Todo - find better way to keep import references
-if (h || Fragment) { }
+if (h || Fragment) {
+}
 
 describe('renderer', () => {
   const parent = createElement('root', {});
@@ -17,11 +18,21 @@ describe('renderer', () => {
   });
 
   it('should render naive element vnode', () => {
-    expect(render(<p className="text-left">Left aligned text on all viewport sizes.</p>, parent)).toMatchSnapshot();;
+    render(
+      <p className="text-left">Left aligned text on all viewport sizes.</p>,
+      parent
+    );
+
+    expect(parent).toMatchSnapshot();
   });
 
   it('should render naive functinal vnode', () => {
-    expect(render(<A title="Hello World" message="youth is not a time of life!" />, parent)).toMatchSnapshot();
+    render(
+      <A title="Hello World" message="youth is not a time of life!" />,
+      parent
+    );
+
+    expect(parent).toMatchSnapshot();
   });
 
   it('should support mixed children', () => {
@@ -35,20 +46,38 @@ describe('renderer', () => {
         {true}
         Mixed Text Node
       </>
-    )
+    );
 
-    expect(render(vnode, parent)).toMatchSnapshot();
+    render(vnode, parent);
+
+    expect(parent).toMatchSnapshot();
   });
 
   it('should support context type with defaults', () => {
-    expect(render(<B />, parent)).toMatchSnapshot();
+    render(<B />, parent);
+
+    expect(parent).toMatchSnapshot();
   });
 
   it('should support context type with payload', () => {
-    expect(render(
+    render(
       <Theme.Provider value={{ header: 'yellow' }}>
         <B />
-      </Theme.Provider>, parent)
-    ).toMatchSnapshot();
+      </Theme.Provider>,
+      parent
+    );
+
+    expect(parent).toMatchSnapshot();
+  });
+
+  it.only('should support context within hooks', () => {
+    render(
+      <Theme.Provider value={{ header: 'yellow' }}>
+        <C />
+      </Theme.Provider>,
+      parent
+    );
+
+    expect(parent).toMatchSnapshot();
   });
 });

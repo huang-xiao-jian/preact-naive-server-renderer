@@ -1,7 +1,7 @@
 /**
-* @description - render vnode tree into element vnode tree
-* @author - huang.jian <hjj491229492@hotmail.com>
-*/
+ * @description - render vnode tree into element vnode tree
+ * @author - huang.jian <hjj491229492@hotmail.com>
+ */
 
 // package
 import { toChildArray, Component, options } from 'preact';
@@ -9,45 +9,50 @@ import { toChildArray, Component, options } from 'preact';
 import { createElement } from './host';
 import { renderProps } from './render-props';
 
-// parallel with render method
-// server side render, lifecycle unnecessary
+// server side render entrance
 export function render(vnode, parent, globalContext = {}) {
-  if (typeof vnode.type === 'function') {
+  if (typeof vnode === 'string' || typeof vnode === 'number') {
+    renderTextNode(vnode, parent);
+  } else if (typeof vnode.type === 'function') {
     renderFunctionalNode(vnode, parent, globalContext);
-  } else {
+  } else if (typeof vnode.type === 'string') {
     renderElementNode(vnode, parent, globalContext);
+  } else if (Array.isArray(vnode)) {
+    renderChildren(vnode, parent, globalContext);
   }
+}
 
-  return parent;
+// just for illustrate
+export function renderTextNode(vnode, parent) {
+  parent.appendChild(`${vnode}`);
 }
 
 export function renderElementNode(vnode, parent, globalContext) {
   const { type, props } = vnode;
-  // 顺序不同，先筛选属性，再创建元素
+  // render properties earlier
   const properties = renderProps(props);
   const element = createElement(type, properties);
 
+  // handle special prop case dangerouslySetInnerHTML
   if (props.dangerouslySetInnerHTML?.__html) {
-    parent.appendChild(props.dangerouslySetInnerHTML.__html);
+    element.appendChild(props.dangerouslySetInnerHTML.__html);
   } else {
+    // render children into element, consider it as standalone render context
     renderChildren(props.children, element, globalContext);
   }
 
-  // 插入结构
-  parent.appendChild(element)
+  // insert operation, cursor always tail within server renderer
+  parent.appendChild(element);
 }
 
 export function renderChildren(children, parent, globalContext) {
-  // toChildArray 扁平化 children，排除 null, undefined, boolean 取值
+  // toChildArray flatten children, ignore null, undefined, boolean child
+  // keep only string, number and element vnode
   const _children = toChildArray(children);
 
   _children.forEach((childVNode) => {
-    if (typeof childVNode === 'string' || typeof childVNode === 'number') {
-      parent.appendChild(`${childVNode}`);
-    } else {
-      render(childVNode, parent, globalContext);
-    }
-  })
+    render(childVNode, parent, globalContext);
+  });
 }
 
 export function renderFunctionalNode(vnode, parent, globalContext) {
@@ -55,14 +60,16 @@ export function renderFunctionalNode(vnode, parent, globalContext) {
   let ins;
 
   const contextType = vnode.type.contextType;
-  const provider = contextType && globalContext[contextType.__c]
-  // provider 无 contextType 声明
-  // useContext 不应该出现在 class component 中，作死的人拦不住就不拦了
-  const context =
-    contextType
-      // 呵呵，_defaultValue 变 __
-      ? provider ? provider.props.value : contextType.__
-      : globalContext;
+  const provider = contextType && globalContext[contextType.__c];
+  // contextType should only related to class component
+  // useContext should only related to function component
+  // context structure change within server side, weired
+  // _defaultValue --> __
+  const context = contextType
+    ? provider
+      ? provider.props.value
+      : contextType.__
+    : globalContext;
 
   // Instantiate the new component
   if (vnode.type.prototype && vnode.type.prototype.render) {
@@ -76,7 +83,7 @@ export function renderFunctionalNode(vnode, parent, globalContext) {
   // preset property
   ins.state = ins.state || {};
 
-  // only getDerivedStateFromProps hook with be called
+  // only getDerivedStateFromProps hook should be called
   if (typeof vnode.type.getDerivedStateFromProps === 'function') {
     Object.assign(
       ins.state,
@@ -84,21 +91,27 @@ export function renderFunctionalNode(vnode, parent, globalContext) {
     );
   }
 
+  // hooks bounding property change, weired still
+  // unnecessary when drop hooks support
+  // __component --> __c
   vnode.__c = ins;
 
-  // options.render
-  if (options.__r) options.__r(vnode);
+  // context structure change within server side, weired
+  // options.render --> options.__r
+  if (options.__r) {
+    options.__r(vnode);
+  }
 
+  const children = ins.render(ins.props, ins.state, ins.context);
 
-  const renderResult = ins.render(ins.props, ins.state, ins.context)
   // support context inheritance
+  // getChildContext only occure after render method call
   if (ins.getChildContext != null) {
     globalContext = { ...globalContext, ...ins.getChildContext() };
   }
 
-  renderChildren(renderResult, parent, globalContext);
+  renderChildren(children, parent, globalContext);
 }
-
 
 /** The `.render()` method for a PFC backing instance. */
 function doRender(props) {

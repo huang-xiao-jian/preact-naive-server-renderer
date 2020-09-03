@@ -73,6 +73,22 @@ HostElement {
 }
 `;
 
+exports[`renderer should support context within hooks 1`] = `
+HostElement {
+  "children": Array [
+    HostElement {
+      "children": Array [
+        "Header With Context yellow",
+      ],
+      "props": Object {},
+      "type": "header",
+    },
+  ],
+  "props": Object {},
+  "type": "root",
+}
+`;
+
 exports[`renderer should support mixed children 1`] = `
 HostElement {
   "children": Array [
