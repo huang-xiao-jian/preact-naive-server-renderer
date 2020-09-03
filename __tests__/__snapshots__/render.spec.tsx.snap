@@ -121,3 +121,19 @@ HostElement {
   "type": "root",
 }
 `;
+
+exports[`renderer should support nest context type with payload 1`] = `
+HostElement {
+  "children": Array [
+    HostElement {
+      "children": Array [
+        "Header With Context green",
+      ],
+      "props": Object {},
+      "type": "header",
+    },
+  ],
+  "props": Object {},
+  "type": "root",
+}
+`;

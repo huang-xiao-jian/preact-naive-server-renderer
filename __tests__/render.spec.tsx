@@ -70,6 +70,19 @@ describe('renderer', () => {
     expect(parent).toMatchSnapshot();
   });
 
+  it('should support nest context type with payload', () => {
+    render(
+      <Theme.Provider value={{ header: 'yellow' }}>
+        <Theme.Provider value={{ header: 'green' }}>
+          <B />
+        </Theme.Provider>
+      </Theme.Provider>,
+      parent
+    );
+
+    expect(parent).toMatchSnapshot();
+  });
+
   it('should support context within hooks', () => {
     render(
       <Theme.Provider value={{ header: 'yellow' }}>
