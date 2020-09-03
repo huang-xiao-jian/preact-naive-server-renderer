@@ -1,11 +1,16 @@
 /**
-* @description - stringify element vnode tree into string without property crop logical
-* @author - huang.jian <hjj491229492@hotmail.com>
-*/
+ * @description - stringify element vnode tree into string without property crop logical
+ * @author - huang.jian <hjj491229492@hotmail.com>
+ */
 
 // internal
-import { ElementVNode, ElementChild, SingleTag, ElementVNodeProps } from './index.interface';
-import { isSingleTag, isFalsyChild } from './utils';
+import {
+  ElementVNode,
+  ElementChild,
+  SingleTag,
+  ElementVNodeProps,
+} from './index.interface';
+import { isSingleTag, encodeEntities } from './utils';
 
 // scope
 export const DEFAULT_SINGLE_TAGS = [
@@ -25,7 +30,7 @@ export const DEFAULT_SINGLE_TAGS = [
   'param',
   'source',
   'track',
-  'wbr'
+  'wbr',
 ];
 
 export function stringifyElementAttributes(props: ElementVNodeProps) {
@@ -36,20 +41,22 @@ export function stringifyElementAttributes(props: ElementVNodeProps) {
 
     if (typeof value === 'string') {
       // quote attributes
-      return value === '' ? `${acc} ${key}` : `${acc} ${key}="${value.replace(/"/g, '&quot;')}"`
+      return value === ''
+        ? `${acc} ${key}`
+        : `${acc} ${key}="${value.replace(/"/g, '&quot;')}"`;
     }
 
     if (typeof value === 'number') {
-      return `${acc} ${key}=${value}`
+      return `${acc} ${key}=${value}`;
     }
 
     if (typeof value === 'boolean') {
       if (value === true) {
-        return `${acc} ${key}`
+        return `${acc} ${key}`;
       }
       // always use string values instead of booleans for aria attributes
       else if (key[0] === 'a' && key[1] === 'r') {
-        return `${acc} ${key}=${value}`
+        return `${acc} ${key}=${value}`;
       }
     }
 
@@ -59,35 +66,37 @@ export function stringifyElementAttributes(props: ElementVNodeProps) {
   return result.trim();
 }
 
-// 递归方式执行
-export function stringifyElementChild(child: ElementChild, singleTags: SingleTag[] = []) {
-  // 空字符串
-  if (isFalsyChild(child)) {
-    return '';
-  }
-
-  // 数字、字符串皆返回字符串
+export function stringifyElementChild(
+  child: ElementChild,
+  singleTags: SingleTag[] = []
+) {
+  // number convert into string
   if (typeof child === 'string' || typeof child === 'number') {
-    return `${child}`;
+    return encodeEntities(`${child}`);
   }
 
   // stringify element vnode
-  const { type, children, props: { dangerouslySetInnerHTML, ...rest } } = child as ElementVNode;
+  const {
+    type,
+    children,
+    props: { dangerouslySetInnerHTML, ...rest },
+  } = child as ElementVNode;
   const before = `<${type}`;
   const attributes = stringifyElementAttributes(rest);
 
-  // 自闭合元素，跳过 children 处理
+  // self close tag, skip children
   if (isSingleTag(type, singleTags)) {
     return `${before} ${attributes} />`;
   }
 
-  // 渲染子元素
-  return `${before} ${attributes}>${stringify(children)}</${type}>`
+  return `${before} ${attributes}>${stringify(children)}</${type}>`;
 }
 
-// 渲染成 VNode tree，确定所有 children 都为数组
-// props 不为空
-// property 不包含 key, ref, on*
-export function stringify(children: ElementChild[], singleTags: SingleTag[] = DEFAULT_SINGLE_TAGS): string {
-  return children.map((child) => stringifyElementChild(child, singleTags)).join('');
+export function stringify(
+  children: ElementChild[],
+  singleTags: SingleTag[] = DEFAULT_SINGLE_TAGS
+): string {
+  return children
+    .map((child) => stringifyElementChild(child, singleTags))
+    .join('');
 }
