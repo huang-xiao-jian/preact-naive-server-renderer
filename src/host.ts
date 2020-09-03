@@ -2,13 +2,7 @@
 import { ElementVNodeProps } from './index.interface';
 
 // inline type
-type HostElementChild =
-  | HostElement
-  | string
-  | number
-  | boolean
-  | null
-  | undefined;
+type HostElementChild = HostElement | string;
 
 // type, props, children
 export class HostElement {
@@ -25,6 +19,9 @@ export class HostElement {
   }
 }
 
-export function createElement(type: string, props: ElementVNodeProps): HostElement {
+export function createElement(
+  type: string,
+  props: ElementVNodeProps
+): HostElement {
   return Reflect.construct(HostElement, [type, props]);
 }
