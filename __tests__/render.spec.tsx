@@ -70,7 +70,7 @@ describe('renderer', () => {
     expect(parent).toMatchSnapshot();
   });
 
-  it.only('should support context within hooks', () => {
+  it('should support context within hooks', () => {
     render(
       <Theme.Provider value={{ header: 'yellow' }}>
         <C />

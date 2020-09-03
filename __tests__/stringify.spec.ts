@@ -66,12 +66,6 @@ describe('stringify element attributes', () => {
 });
 
 describe('stringify element child', () => {
-  it('should support falsy case', () => {
-    expect(stringifyElementChild(undefined)).toEqual('');
-    expect(stringifyElementChild(null)).toEqual('');
-    expect(stringifyElementChild(Number.NaN)).toEqual('');
-  });
-
   it('should support literal case', () => {
     expect(stringifyElementChild('Hello world!')).toEqual('Hello world!');
     expect(stringifyElementChild(555)).toEqual('555');
