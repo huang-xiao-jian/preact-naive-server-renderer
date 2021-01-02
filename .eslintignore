@@ -81,3 +81,6 @@ typings/
 # Production
 dist
 build
+
+# Test
+*.fixture.*

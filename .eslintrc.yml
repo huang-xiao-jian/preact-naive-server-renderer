@@ -27,3 +27,4 @@ rules:
   semi:
     - error
     - always
+  import/prefer-default-export: off

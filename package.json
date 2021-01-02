@@ -3,19 +3,21 @@
   "version": "0.1.0",
   "description": "A native renderer implementation for server side",
   "main": "lib/index.js",
-  "types": "src/index.ts",
+  "types": "types/index.d.ts",
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=12.0.0"
   },
   "scripts": {
-    "prepublishOnly": "npm-run-all -s clean compile",
+    "prepublishOnly": "npm-run-all -s clean compile:*",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "clean": "rm -rf lib",
-    "compile": "babel src --source-maps --out-dir lib --extensions '.js,.ts'"
+    "compile:code": "babel src --source-maps --out-dir lib --extensions '.js,.ts'",
+    "compile:types": "tsc --project tsconfig.production.json"
   },
   "files": [
-    "lib"
+    "lib",
+    "types"
   ],
   "repository": {
     "type": "git",
@@ -59,7 +61,6 @@
     "babel-jest": "^24.1.0",
     "cz-conventional-changelog": "3.1.1",
     "eslint": "^7.7.0",
-    "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-airbnb-typescript": "^9.0.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.18.2",
@@ -83,6 +84,6 @@
     }
   },
   "peerDependencies": {
-    "preact": "^10.4.8"
+    "preact": "^10.5.8"
   }
 }
