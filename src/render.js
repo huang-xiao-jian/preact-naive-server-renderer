@@ -62,6 +62,13 @@ export function renderFunctionalNode(vnode, parent, globalContext) {
   // 组件实例
   let ins;
 
+  // hooks bounding property change, weired still
+  // unnecessary when drop hooks support
+  // _diff --> __c
+  if (options.__b) {
+    options.__b(vnode);
+  }
+
   const contextType = vnode.type.contextType;
   const provider = contextType && globalContext[contextType.__c];
   // contextType should only related to class component
