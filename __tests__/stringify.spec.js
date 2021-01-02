@@ -1,10 +1,10 @@
+/* eslint-disable quotes */
 /**
  * @description - suits example
  * @author - huang.jian <hjj491229492@hotmail.com>
  */
 
 // internal
-import { ElementChild } from '../src/index.interface';
 import {
   stringifyElementChild,
   stringifyElementAttributes,
@@ -72,7 +72,7 @@ describe('stringify element child', () => {
   });
 
   it('should support element vnode case', () => {
-    const vnode: ElementChild = {
+    const vnode = {
       type: 'div',
       props: {
         id: 'header',
